@@ -47,7 +47,7 @@ then
 		curr_time=`date +%s`
 		let "delta=$curr_time-$last_time"
 		echo "delta: $delta"
-		if [ "$delta" -gt "$interval" ]
+		if [ "$delta" -ge "$interval" ]
 		then
 			echo "Capacity: $capacity%" > $message_file
 			mail -s "$subject" "$recipient" < "$message_file"
