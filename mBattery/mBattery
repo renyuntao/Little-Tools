@@ -6,14 +6,17 @@
 # Maintainer:
 #	Yuntao Ren <rytubuntulinux@gmail.com>
 
+
 time_file="recordTime"
-shreshold=50
+shreshold=60
 log_file="mBattery.log"
+charge_status="Charging"
+discharge_status="Discharging"
 
 # E-mail part
 subject="Warning!"
 message_file="message.txt"
-recipient="18888888888@139.com"    
+recipient="18712720213@139.com"    
 
 # Set interval(Send E-mail) is 10 minutes, i.e. 600s
 interval=600
@@ -21,12 +24,22 @@ interval=600
 # Get capacity of battery
 capacity=`cat /sys/class/power_supply/BAT0/capacity`   
 
+curr_status=`cat /sys/class/power_supply/BAT0/status`
+if [ "$curr_status" == "Charging" ]
+then
+	# Log
+	now=`date`
+	log_message="$now | Run mBattery | Capacity: $capacity% | $charge_status"
+	echo "$log_message" >> $log_file
+	exit 0
+fi
+
 # Log
 now=`date`
-log_message="$now | Run mBattery | Capacity: $capacity%"
+log_message="$now | Run mBattery | Capacity: $capacity% | $discharge_status"
 echo "$log_message" >> $log_file
 
-if [ "$capacity" -lt "$shreshold" ]
+if [ "$capacity" -le "$shreshold" ]
 then
 	if [ -f "$time_file" ]
 	then
@@ -41,7 +54,7 @@ then
 
 			# Log
 			now=`date`
-			log_message="$now | Send E-mail to $recipient | Capacity: $capacity%"
+			log_message="$now | Send E-mail to $recipient | Capacity: $capacity% | $discharge_status"
 			echo "$log_message" >> $log_file     
 
 			rm $time_file
@@ -54,7 +67,7 @@ then
 
 		# Log
 		now=`date`
-		log_message="$now | Send E-mail to $recipient | Capacity: $capacity%"
+		log_message="$now | Send E-mail to $recipient | Capacity: $capacity% | $discharge_status"
 		echo "$log_message" >> $log_file     
 	fi
 fi
