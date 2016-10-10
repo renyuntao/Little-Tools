@@ -1,0 +1,62 @@
+#!/bin/bash        
+# Date: 
+#	2016-10-10
+# Function:
+# 	Monitor the battery capacity on Ubuntu 14.04
+# Maintainer:
+#	Yuntao Ren <rytubuntulinux@gmail.com>
+
+time_file="recordTime"
+shreshold=50
+log_file="mBattery.log"
+
+# E-mail part
+subject="Warning!"
+message_file="message.txt"
+recipient="18712720213@139.com"    
+
+# Set interval(Send E-mail) is 10 minutes, i.e. 600s
+interval=600
+
+# Get capacity of battery
+capacity=`cat /sys/class/power_supply/BAT0/capacity`   
+
+# Log
+now=`date`
+log_message="$now | Run mBattery | Capacity: $capacity%"
+echo "$log_message" >> $log_file
+
+if [ "$capacity" -lt "$shreshold" ]
+then
+	if [ -f "$time_file" ]
+	then
+		last_time=`cat $time_file`
+		curr_time=`date +%s`
+		let "delta=$curr_time-$last_time"
+		echo "delta: $delta"
+		if [ "$delta" -gt "$interval" ]
+		then
+			echo "Capacity: $capacity%" > $message_file
+			mail -s "$subject" "$recipient" < "$message_file"
+
+			# Log
+			now=`date`
+			log_message="$now | Send E-mail to $recipient | Capacity: $capacity%"
+			echo "$log_message" >> $log_file     
+
+			rm $time_file
+		fi
+	else
+		curr_time=`date +%s`        
+		echo $curr_time > $time_file
+		echo "Capacity: $capacity%" > $message_file
+		mail -s "$subject" "$recipient" < "$message_file"
+
+		# Log
+		now=`date`
+		log_message="$now | Send E-mail to $recipient | Capacity: $capacity%"
+		echo "$log_message" >> $log_file     
+	fi
+fi
+
+exit 0
