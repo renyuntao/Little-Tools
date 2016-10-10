@@ -16,7 +16,7 @@ discharge_status="Discharging"
 # E-mail part
 subject="Warning!"
 message_file="message.txt"
-recipient="18712720213@139.com"    
+recipient="18888888888@139.com"    
 
 # Set interval(Send E-mail) is 10 minutes, i.e. 600s
 interval=600
