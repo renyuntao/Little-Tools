@@ -1,0 +1,56 @@
+#!/usr/bin/perl
+# Function: Run specified command multi times
+# Usage:
+#    mrun [-t times] command
+#    mrun -h
+# Date: 2017-05-08
+# Author: Ren Yuntao <rytubuntulinux@gmail.com>
+
+use strict;
+use warnings;
+use Getopt::Long;
+
+sub help
+{
+	print '#'x20 . ' HELP ' . '#'x20 . "\n\n";
+	print "Function:\n\n";
+	print "\tRun specified command multi times\n\n";
+	print "Usage:\n\n";
+	print "\tmrun [-t times] command\n";
+	print "\tmrun -h\n\n";
+	print '#'x46 . "\n";
+}
+
+my $times = 3;
+my $help = 0;
+GetOptions("times=i" => \$times,
+           "help" => \$help)
+or die("Error in command line arguments");
+
+if($help)
+{
+	help();
+	exit 0;
+}
+
+my $argNum = scalar @ARGV;
+if(0 == $argNum)
+{
+	print "Error: Missing command\n";
+	help();
+	exit 1;
+}
+
+my $cmd = join ' ', @ARGV;
+chomp $cmd;
+
+# Run command $times times
+my $counter = 0;
+while($counter < $times)
+{
+	++$counter;
+	system($cmd) == 0 or die "Error: $!";
+}
+
+print "Run command '$cmd' $times times successfully!\n";
+exit 0;
