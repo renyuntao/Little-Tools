@@ -41,6 +41,18 @@ if(0 == $argNum)
 	exit 1;
 }
 
+my $i = 0;
+for(; $i < $argNum; ++$i)
+{
+	my $haveSpace = scalar(split ' ', $ARGV[$i]);
+
+	# Have space
+	if($haveSpace > 1)
+	{
+		$ARGV[$i] = "'" . $ARGV[$i] . "'";
+	}
+}
+
 my $cmd = join ' ', @ARGV;
 chomp $cmd;
 
@@ -52,5 +64,5 @@ while($counter < $times)
 	system($cmd) == 0 or die "Error: $!";
 }
 
-print "Run command '$cmd' $times times successfully!\n";
+print "Run command `$cmd` $times times successfully!\n";
 exit 0;
